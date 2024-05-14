@@ -1,0 +1,124 @@
+-- Create the ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "EditorGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create the main frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 800, 0, 600)
+mainFrame.Position = UDim2.new(0.5, -400, 0.5, -300)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+mainFrame.Parent = screenGui
+
+-- Create the editor button
+local editorButton = Instance.new("TextButton")
+editorButton.Size = UDim2.new(0, 100, 0, 50)
+editorButton.Position = UDim2.new(0, 10, 0, 10)
+editorButton.Text = "Editor"
+editorButton.Parent = mainFrame
+
+-- Create the saved scripts button
+local savedScriptsButton = Instance.new("TextButton")
+savedScriptsButton.Size = UDim2.new(0, 100, 0, 50)
+savedScriptsButton.Position = UDim2.new(0, 10, 0, 70)
+savedScriptsButton.Text = "Saved Scripts"
+savedScriptsButton.Parent = mainFrame
+
+-- Create the script hub button
+local scriptHubButton = Instance.new("TextButton")
+scriptHubButton.Size = UDim2.new(0, 100, 0, 50)
+scriptHubButton.Position = UDim2.new(0, 10, 0, 130)
+scriptHubButton.Text = "Script Hub"
+scriptHubButton.Parent = mainFrame
+
+-- Create the settings button
+local settingsButton = Instance.new("TextButton")
+settingsButton.Size = UDim2.new(0, 100, 0, 50)
+settingsButton.Position = UDim2.new(0, 10, 0, 190)
+settingsButton.Text = "Settings"
+settingsButton.Parent = mainFrame
+
+-- Create the script editor text box
+local scriptEditor = Instance.new("TextBox")
+scriptEditor.Size = UDim2.new(0, 600, 0, 400)
+scriptEditor.Position = UDim2.new(0, 120, 0, 10)
+scriptEditor.Text = "Scripts and text here."
+scriptEditor.TextWrapped = true
+scriptEditor.ClearTextOnFocus = false
+scriptEditor.Parent = mainFrame
+
+-- Create the save button
+local saveButton = Instance.new("TextButton")
+saveButton.Size = UDim2.new(0, 100, 0, 50)
+saveButton.Position = UDim2.new(0, 120, 0, 420)
+saveButton.Text = "Save"
+saveButton.Parent = mainFrame
+
+-- Create the clear button
+local clearButton = Instance.new("TextButton")
+clearButton.Size = UDim2.new(0, 100, 0, 50)
+clearButton.Position = UDim2.new(0, 230, 0, 420)
+clearButton.Text = "Clear"
+clearButton.Parent = mainFrame
+
+-- Create the inject button
+local injectButton = Instance.new("TextButton")
+injectButton.Size = UDim2.new(0, 100, 0, 50)
+injectButton.Position = UDim2.new(0, 340, 0, 420)
+injectButton.Text = "INJECT"
+injectButton.Parent = mainFrame
+
+-- Create the execute button
+local executeButton = Instance.new("TextButton")
+executeButton.Size = UDim2.new(0, 100, 0, 50)
+executeButton.Position = UDim2.new(0, 450, 0, 420)
+executeButton.Text = "EXECUTE"
+executeButton.Parent = mainFrame
+
+-- Functionality for buttons
+clearButton.MouseButton1Click:Connect(function()
+    scriptEditor.Text = ""
+end)
+
+saveButton.MouseButton1Click:Connect(function()
+    -- Save the script text to a DataStore or a local file
+    local DataStoreService = game:GetService("DataStoreService")
+    local myDataStore = DataStoreService:GetDataStore("MyScripts")
+    local success, err = pcall(function()
+        myDataStore:SetAsync("SavedScript", scriptEditor.Text)
+    end)
+    if success then
+        print("Script saved successfully!")
+    else
+        warn("Error saving script: " .. err)
+    end
+end)
+
+injectButton.MouseButton1Click:Connect(function()
+    -- Inject the script (for example, adding it to a part or running a function)
+    local source = scriptEditor.Text
+    local function executeInjectedScript()
+        local success, message = pcall(function()
+            loadstring(source)()
+        end)
+        if not success then
+            warn("Error injecting script: " .. message)
+        else
+            print("Script injected successfully!")
+        end
+    end
+    executeInjectedScript()
+end)
+
+executeButton.MouseButton1Click:Connect(function()
+    -- Execute the script
+    local source = scriptEditor.Text
+    local success, message = pcall(function()
+        loadstring(source)()
+    end)
+    if not success then
+        warn("Error executing script: " .. message)
+    else
+        print("Script executed successfully!")
+    end
+end)
